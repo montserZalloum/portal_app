@@ -18,7 +18,7 @@
  "list_columns": [],
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2025-10-29 16:08:05.963660",
+ "modified": "2025-10-29 19:08:51.457983",
  "modified_by": "Administrator",
  "module": "Portal App",
  "name": "purchase-order",
@@ -314,19 +314,6 @@
   },
   {
    "allow_read_on_all_link_options": 0,
-   "fieldname": "conversion_rate",
-   "fieldtype": "Float",
-   "hidden": 0,
-   "label": "Exchange Rate",
-   "max_length": 0,
-   "max_value": 0,
-   "precision": "9",
-   "read_only": 0,
-   "reqd": 1,
-   "show_in_filter": 0
-  },
-  {
-   "allow_read_on_all_link_options": 0,
    "fieldname": "column_break2",
    "fieldtype": "Column Break",
    "hidden": 0,
@@ -349,20 +336,6 @@
    "precision": "",
    "read_only": 0,
    "reqd": 1,
-   "show_in_filter": 0
-  },
-  {
-   "allow_read_on_all_link_options": 0,
-   "fieldname": "price_list_currency",
-   "fieldtype": "Link",
-   "hidden": 0,
-   "label": "Price List Currency",
-   "max_length": 0,
-   "max_value": 0,
-   "options": "Currency",
-   "precision": "",
-   "read_only": 1,
-   "reqd": 0,
    "show_in_filter": 0
   },
   {
@@ -1568,7 +1541,7 @@
    "max_value": 0,
    "options": "\nDraft\nOn Hold\nTo Deliver and Bill\nTo Bill\nTo Deliver\nCompleted\nCancelled\nClosed",
    "precision": "",
-   "read_only": 1,
+   "read_only": 0,
    "reqd": 0,
    "show_in_filter": 0
   },

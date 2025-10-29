@@ -1,5 +1,11 @@
 {
- "actions": [],
+ "actions": [
+  {
+   "label": "Convert to Sales Order",
+   "name": "create_sales_order",
+   "show_if_doc_status_is": "Submitted"
+  }
+ ],
  "allow_auto_repeat": 1,
  "allow_import": 1,
  "autoname": "naming_series:",
@@ -432,7 +438,6 @@
    "oldfieldtype": "Currency",
    "precision": "9",
    "print_hide": 1,
-   "reqd": 1,
    "width": "100px"
   },
   {
@@ -463,8 +468,7 @@
    "label": "Price List Currency",
    "options": "Currency",
    "print_hide": 1,
-   "read_only": 1,
-   "reqd": 1
+   "read_only": 1
   },
   {
    "description": "Rate at which Price list currency is converted to company's base currency",
@@ -474,8 +478,7 @@
    "hide_seconds": 1,
    "label": "Price List Exchange Rate",
    "precision": "9",
-   "print_hide": 1,
-   "reqd": 1
+   "print_hide": 1
   },
   {
    "default": "0",
@@ -1284,7 +1287,6 @@
    "options": "\nDraft\nOn Hold\nTo Deliver and Bill\nTo Bill\nTo Deliver\nCompleted\nCancelled\nClosed",
    "print_hide": 1,
    "read_only": 1,
-   "reqd": 1,
    "search_index": 1,
    "width": "100px"
   },
@@ -1678,7 +1680,7 @@
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-29 15:42:09.890705",
+ "modified": "2025-10-29 19:11:50.690272",
  "modified_by": "Administrator",
  "module": "Portal App",
  "name": "Customer Sales Order",
