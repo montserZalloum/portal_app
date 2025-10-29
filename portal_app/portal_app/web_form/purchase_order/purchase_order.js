@@ -1,3 +1,10 @@
+$(document).on('submit', 'form.web-form', function(e) {
+    e.preventDefault(); // stop browser reload
+    if (frappe.web_form) {
+        frappe.web_form.save();
+    }
+});
+
 $(document).ready(function(){
     // This script will run as soon as the basic page structure is ready.
 
