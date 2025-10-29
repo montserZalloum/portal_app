@@ -11,7 +11,6 @@ $(document).ready(function(){
             // Get all fields that are actually present on this web form.
             // We create a Set for very fast lookups.
             const available_fields = new Set(frappe.web_form.fields.map(df => df.fieldname));
-
             // Use URLSearchParams to easily get all parameters from the URL.
             const params = new URLSearchParams(window.location.search);
             let params_were_set = false;
@@ -42,6 +41,41 @@ $(document).ready(function(){
                     }
                 }
             }
+
+            // Check if quotation_id was passed in URL, fetch items and populate the table
+            const quotation_id = params.get('quotation_id');
+            if (quotation_id && available_fields.has('items')) {
+                frappe.call({
+                    method: 'portal_app.api.get_quotation_items',
+                    args: { quotation_id },
+                    callback: function(response) {
+                        const items = response.message || [];
+                        const field = frappe.web_form.fields_dict['items'];
+                    
+                        if (!field) return console.error('items field not found');
+                        if (!Array.isArray(items)) return console.error('Invalid items data');
+                    
+                        // Clear current rows
+                        frappe.web_form.doc.items = [];
+                    
+                        // Add new rows
+                        items.forEach(row => {
+                            frappe.web_form.doc.items.push({
+                                doctype: 'Purchase Order Item',
+                                ...row
+                            });
+                        });
+                    
+                        // Update field and UI
+                        field.set_value(frappe.web_form.doc.items);
+                        if (field.grid) field.grid.refresh();
+                        console.log('Items loaded:', frappe.web_form.doc.items);
+                    }
+                    ,                    
+                    error: err => console.error('Error fetching quotation items:', err)
+                });
+            }
+            
         }, 100); // 100ms delay for robustness
     }
 });
