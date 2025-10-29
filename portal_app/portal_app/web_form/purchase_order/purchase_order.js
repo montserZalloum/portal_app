@@ -44,6 +44,9 @@ $(document).ready(function(){
 
             // Check if quotation_id was passed in URL, fetch items and populate the table
             const quotation_id = params.get('quotation_id');
+            if (available_fields.has('corex_customer_quotation_id')) {
+                frappe.web_form.set_value('corex_customer_quotation_id', quotation_id);
+            }
             if (quotation_id && available_fields.has('items')) {
                 frappe.call({
                     method: 'portal_app.api.get_quotation_items',
@@ -69,7 +72,6 @@ $(document).ready(function(){
                         // Update field and UI
                         field.set_value(frappe.web_form.doc.items);
                         if (field.grid) field.grid.refresh();
-                        console.log('Items loaded:', frappe.web_form.doc.items);
                     }
                     ,                    
                     error: err => console.error('Error fetching quotation items:', err)

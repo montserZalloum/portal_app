@@ -18,7 +18,7 @@
  "list_columns": [],
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2025-10-28 09:41:58.316521",
+ "modified": "2025-10-29 15:48:37.695011",
  "modified_by": "Administrator",
  "module": "Portal App",
  "name": "purchase-order",
@@ -81,6 +81,20 @@
    "precision": "",
    "read_only": 0,
    "reqd": 1,
+   "show_in_filter": 0
+  },
+  {
+   "allow_read_on_all_link_options": 0,
+   "fieldname": "corex_customer_quotation_id",
+   "fieldtype": "Data",
+   "hidden": 0,
+   "label": "Quotation Id",
+   "max_length": 0,
+   "max_value": 0,
+   "options": "",
+   "precision": "",
+   "read_only": 1,
+   "reqd": 0,
    "show_in_filter": 0
   },
   {
