@@ -10,7 +10,7 @@ app_license = "mit"
 
 # required_apps = []
 web_include_js = [
-    # "assets/portal_app/js/portal/quotation.js"
+    "assets/portal_app/js/portal/portal_webfroms.js"
 ]
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [

@@ -25,3 +25,13 @@ def get_quotation_items(quotation_id):
 		frappe.throw(f"Quotation {quotation_id} not found")
 	except Exception as e:
 		frappe.throw(str(e))
+
+@frappe.whitelist()
+def get_current_user_roles():
+    """
+    Returns a list of roles for the current session user.
+    This is a secure bridge function to be called from client-side JS.
+    """
+    # frappe.get_roles() automatically gets roles for the current user.
+    # It also correctly handles the "Guest" user.
+    return frappe.get_roles()
