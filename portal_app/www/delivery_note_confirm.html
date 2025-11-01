@@ -1,0 +1,58 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<div class="container" style="max-width: 600px; margin: 50px auto; text-align: center;">
+	<div class="confirmation-card" style="background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+		{% if status == "success" %}
+			<div class="alert alert-success" style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+				<h4 style="margin: 0 0 10px 0;">✓ Confirmed Successfully</h4>
+				<p style="margin: 0;">{{ message }}</p>
+			</div>
+			<div style="margin-top: 30px;">
+				<p style="color: #666; font-size: 14px;">You can now close this page or continue browsing.</p>
+				<a href="/" class="btn btn-primary" style="background-color: #27ae60; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-block;">Go to Home</a>
+			</div>
+		{% elif status == "info" %}
+			<div class="alert alert-info" style="background-color: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+				<h4 style="margin: 0 0 10px 0;">ℹ️ Already Confirmed</h4>
+				<p style="margin: 0;">{{ message }}</p>
+			</div>
+			<div style="margin-top: 30px;">
+				<p style="color: #666; font-size: 14px;">This delivery note was already confirmed.</p>
+				<a href="/" class="btn btn-primary" style="background-color: #3498db; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-block;">Go to Home</a>
+			</div>
+		{% else %}
+			<div class="alert alert-danger" style="background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+				<h4 style="margin: 0 0 10px 0;">✕ Error</h4>
+				<p style="margin: 0;">{{ message }}</p>
+			</div>
+			<div style="margin-top: 30px;">
+				<p style="color: #666; font-size: 14px;">Please try again or contact support if the problem persists.</p>
+				<a href="/" class="btn btn-primary" style="background-color: #e74c3c; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-block;">Go to Home</a>
+			</div>
+		{% endif %}
+	</div>
+</div>
+
+<style>
+	.confirmation-card {
+		animation: slideIn 0.3s ease-in-out;
+	}
+
+	@keyframes slideIn {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.btn-primary:hover {
+		opacity: 0.9;
+		transition: opacity 0.3s;
+	}
+</style>
+{% endblock %}

@@ -12,6 +12,18 @@ app_license = "mit"
 web_include_js = [
     "assets/portal_app/js/portal/portal_webfroms.js"
 ]
+
+after_migrate = [
+    "portal_app.custom.delivery_note_customer_confirmation.add_customer_confirmation_fields",
+]
+
+# Document Events
+# ---------------
+doc_events = {
+	"Delivery Note": {
+		"on_submit": "portal_app.custom.delivery_note_email.send_delivery_note_email_on_submit",
+	}
+}
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
 # 	{
