@@ -27,6 +27,40 @@ def get_quotation_items(quotation_id):
 		frappe.throw(str(e))
 
 @frappe.whitelist()
+def check_quotation_status(quotation_id):
+	"""
+	Check if a quotation exists and if it already has a Customer Purchase Order.
+	Returns a status dict without throwing errors.
+	"""
+	try:
+		quotation = frappe.get_doc('Quotation', quotation_id)
+
+		# Check if the quotation has a customer purchase order
+		if hasattr(quotation, 'corex_customer_quotation_id') and quotation.corex_customer_quotation_id:
+			return {
+				'status': 'already_processed',
+				'customer_po_id': quotation.corex_customer_quotation_id
+			}
+
+		# Quotation exists and is ready for processing
+		return {
+			'status': 'ok'
+		}
+
+	except frappe.DoesNotExistError:
+		# Return not found status without throwing error
+		return {
+			'status': 'not_found'
+		}
+	except Exception as e:
+		# Log the error but don't throw
+		frappe.logger().error(f"Error checking quotation status for {quotation_id}: {str(e)}")
+		return {
+			'status': 'error',
+			'message': str(e)
+		}
+
+@frappe.whitelist()
 def get_current_user_roles():
     """
     Returns a list of roles for the current session user.
