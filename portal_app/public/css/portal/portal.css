@@ -1,0 +1,3 @@
+[data-roles*="Customer"] .web-form-head .web-form-actions .edit-button {
+    display: none;
+}

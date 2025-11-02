@@ -12,6 +12,9 @@ app_license = "mit"
 web_include_js = [
     "assets/portal_app/js/portal/portal_webfroms.js"
 ]
+web_include_css = [
+    "assets/portal_app/css/portal/portal.css"
+]
 
 after_migrate = [
     "portal_app.custom.delivery_note_customer_confirmation.add_customer_confirmation_fields",

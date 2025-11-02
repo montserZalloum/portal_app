@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    addRolesToBody();
     isListingPage()
 })
 
@@ -23,5 +24,12 @@ function isListingPage() {
 }
 
 function addRolesToBody() {
-    
+    frappe.call({
+        method: 'portal_app.api.get_current_user_roles',
+    }).then(r => {
+        if (r && r.message) {
+            let roles = r.message;
+            document.body.setAttribute('data-roles', roles.join(','));
+        }
+    });
 }
