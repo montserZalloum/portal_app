@@ -10,7 +10,7 @@ $(document).ready(function(){
 
     // We only want this logic to execute when creating a BRAND NEW form.
     // The '!frappe.web_form.doc_name' check ensures this.
-    if (!frappe.web_form.doc_name) {
+    if (window.location.pathname.includes('/new')) {
         const params = new URLSearchParams(window.location.search);
         const quotation_id = params.get('quotation_id');
 
@@ -164,5 +164,7 @@ $(document).ready(function(){
 
             }, 100); // 100ms delay for robustness
         }
+    } else {
+        
     }
 });

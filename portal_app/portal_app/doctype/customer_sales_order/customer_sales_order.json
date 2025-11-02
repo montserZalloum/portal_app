@@ -1,11 +1,5 @@
 {
- "actions": [
-  {
-   "label": "Convert to Sales Order",
-   "name": "create_sales_order",
-   "show_if_doc_status_is": "Submitted"
-  }
- ],
+ "actions": [],
  "allow_auto_repeat": 1,
  "allow_import": 1,
  "autoname": "naming_series:",
@@ -1680,8 +1674,8 @@
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-10-29 19:11:50.690272",
- "modified_by": "Administrator",
+ "modified": "2025-11-02 22:32:43.458084",
+ "modified_by": "zmontsaer@gmail.com",
  "module": "Portal App",
  "name": "Customer Sales Order",
  "naming_rule": "By \"Naming Series\" field",
