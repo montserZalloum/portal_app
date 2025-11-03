@@ -1,4 +1,4 @@
-[data-roles*="Customer"] .web-form-head .web-form-actions .edit-button,
+[data-path*="quotation/"] .web-form-head .web-form-actions .edit-button,
 [data-path="customer-purchase-order/list"] .web-list-header .button-new,
 [data-path="customer-purchase-order/new"] .discard-btn{
     display: none;

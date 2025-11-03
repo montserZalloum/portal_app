@@ -25,7 +25,10 @@ after_migrate = [
 doc_events = {
 	"Delivery Note": {
 		"on_submit": "portal_app.custom.delivery_note_email.send_delivery_note_email_on_submit",
-	}
+	},
+    # "Comment": {
+    #     "before_insert": "portal_app.overrides.comment_notifications.send_notification_on_new_comment"
+    # }
 }
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
