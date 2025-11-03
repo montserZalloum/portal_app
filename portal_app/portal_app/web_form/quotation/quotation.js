@@ -19,6 +19,24 @@ $(document).ready(function() {
 	fillFormFields()
 });
 
+
+const tables = {
+	TAXES_TABLE_HEADERS: {
+		"account_head": "Account Head",
+		"charge_type": "Type",
+		"rate": "Tax Rate",
+		"tax_amount": "Amount",
+		"total": "Total",
+	},
+	PAYMENT_SCHEDULE_HEADERS: {
+		"payment_term": "Payment Term",
+		"description" : "Description",
+		"due_date": "Due Date",
+		"invoice_portion": "Invoice Portion",
+		"payment_amount": "Payment Amount"
+	}
+}
+
 function fillFormFields(){
 	frappe.web_form.fields_list.forEach(f => {
 		const el = $(`[data-fieldname="${f.df.fieldname}"]`);
@@ -38,6 +56,55 @@ function fillFormFields(){
 			console.log(`Field: ${label}, Value: ${newVal}`);
 			el.find('.control-label').text(label);
 		  }
+		}
+	  });
+	  
+
+	frappe.web_form.fields_list.forEach(f => {
+		const el = $(`[data-fieldname="${f.df.fieldname}"]`);
+		if (!el.parents('.hide-control').length) {
+			const fieldType = f.df.fieldtype;
+			const valueEl = el.find('.control-value');
+			const currentVal = valueEl.text().trim();
+			const data = frappe.web_form.doc[f.df.fieldname];
+			const label = f.df.label || el.find('label.control-label').text().trim();
+
+		  
+		  
+			if (fieldType === "Table" && Array.isArray(data) && data.length) {
+				let tableHeaders = null;
+			
+				if (f.df.fieldname === "taxes") {
+					tableHeaders = tables.TAXES_TABLE_HEADERS;
+				}
+				if (f.df.fieldname === "payment_schedule") {
+					tableHeaders = tables.PAYMENT_SCHEDULE_HEADERS;
+				}
+				if (f.df.fieldname === "items") {
+					return;
+				}
+
+			
+				const table = $('<table class="table table-sm table-bordered"><thead><tr></tr></thead><tbody></tbody></table>');
+			
+				const cols = tableHeaders ? Object.keys(tableHeaders) : Object.keys(data[0] || {});
+			
+				// headers
+				cols.forEach(c => {
+				const label = tableHeaders ? tableHeaders[c] : c;
+				table.find("thead tr").append(`<th>${label}</th>`);
+				});
+			
+				// rows
+				data.forEach(row => {
+				const tr = $("<tr></tr>");
+				cols.forEach(c => tr.append(`<td>${row[c] ?? ""}</td>`));
+				table.find("tbody").append(tr);
+				});
+			
+				el.append(`<label class="control-label d-block mb-2">${label}</label>`);
+				el.append(table);
+			}
 		}
 	  });
 	  

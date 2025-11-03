@@ -15,6 +15,22 @@
     background-color: var(--disabled-control-bg)!important;
     pointer-events: none;
 }
-.web-form:has(.web-form-skeleton) .web-form-footer {
+.web-form:has(.web-form-skeleton) .web-form-footer,
+[data-path*="quotation/"] [data-fieldname="base_total_taxes_and_charges"],
+[data-path*="quotation/"] [data-fieldname="base_rounding_adjustment"],
+[data-path*="quotation/"] [data-fieldname="base_rounded_total"],
+[data-path*="quotation/"] [data-fieldname="base_in_words"],
+[data-path*="quotation/"] [data-fieldname="rounding_adjustment"],
+[data-path*="quotation/"] [data-fieldname="rounded_total"],
+[data-path*="quotation/"] [data-fieldname="coupon_code"],
+[data-path*="quotation/"] [data-fieldname="taxes_and_charges"],
+[data-path*="quotation/"] [data-fieldname="base_discount_amount"],
+[data-path*="quotation/"] [data-fieldname="disable_rounded_total"],
+[data-path*="quotation/"] [data-fieldname="payment_terms_template"],
+[data-path*="quotation/"] [data-fieldname="tc_name"],
+[data-path*="quotation/"] [data-fieldname="base_grand_total"] {
     display: none;
+}
+.form-section {
+    overflow-x: auto;
 }
