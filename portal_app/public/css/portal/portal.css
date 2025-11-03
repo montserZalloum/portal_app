@@ -31,6 +31,6 @@
 [data-path*="quotation/"] [data-fieldname="base_grand_total"] {
     display: none;
 }
-.form-section {
-    overflow-x: auto;
+.web-form [data-fieldtype="Table"]{
+    
 }

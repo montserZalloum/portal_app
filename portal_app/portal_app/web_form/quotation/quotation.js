@@ -16,7 +16,8 @@ $(document).ready(function() {
 		}
 	});
 
-	fillFormFields()
+	fillFormFields();
+	hideEmptySections()
 });
 
 
@@ -152,4 +153,22 @@ function checkForMatchingSalesOrder(cb) {
 			}
 		}
 	});
+}
+
+function hideEmptySections() {
+	$('.form-section').each(function () {
+		const section = $(this);
+		const hasTable = section.find('.section-body [data-fieldtype="Table"]').length > 0;
+		const tableRendered = section.find('.section-body [data-fieldtype="Table"] table').length > 0;
+		const tableGrid = section.find('.section-body [data-fieldtype="Table"] .grid-field').length > 0;
+		const labels = section.find('form .control-label');
+		const hasNonEmptyLabel = labels.filter(function () {
+			return $(this).html().trim().length > 0;
+		}).length > 0;
+		
+		if ((hasTable && !tableRendered && !tableGrid) || !hasNonEmptyLabel) {
+		  section.hide();
+		}
+	});
+	  
 }
