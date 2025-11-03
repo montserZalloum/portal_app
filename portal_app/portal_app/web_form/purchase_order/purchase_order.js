@@ -131,6 +131,23 @@ $(document).ready(function(){
                 if (available_fields.has('corex_customer_quotation_id')) {
                     frappe.web_form.set_value('corex_customer_quotation_id', quotation_id);
                 }
+                // Set naming_series to the first available option automatically
+                if (available_fields.has('naming_series')) {
+                    const naming_series_field = frappe.web_form.fields_dict['naming_series'];
+                    if (naming_series_field && naming_series_field.df.options) {
+                        const options = naming_series_field.df.options.split('\n').filter(opt => opt.trim());
+                        if (options.length > 0) {
+                            frappe.web_form.set_value('naming_series', options[0]);
+                        }
+                    }
+                }
+
+                // Set transaction_date to today's date automatically
+                if (available_fields.has('transaction_date')) {
+                    const today = frappe.datetime.get_today();
+                    frappe.web_form.set_value('transaction_date', today);
+                }
+
                 if (quotation_id && available_fields.has('items')) {
                     frappe.call({
                         method: 'portal_app.api.get_quotation_items',
