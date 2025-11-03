@@ -3,11 +3,13 @@ $(document).ready(function() {
 	const company = frappe.web_form.doc.company;
 	const selling_price_list = frappe.web_form.doc.selling_price_list;
 	const quotation_id = frappe.web_form.doc.name;
-
+	const currency = frappe.web_form.doc.currency;
+	const ignore_pricing_rule = frappe.web_form.doc.ignore_pricing_rule;
+	let queryString = `&ignore_pricing_rule=${ignore_pricing_rule}`
 	
 	checkForMatchingSalesOrder(function(isConverted){
 		if(!isConverted){
-			let base_route = `/customer-purchase-order/new?customer=${customer_name}&order_type=Sales&company=${company}&selling_price_list=${selling_price_list}&quotation_id=${quotation_id}`;
+			let base_route = `/customer-purchase-order/new?quotation_id=${quotation_id}`;
 			// Use the corrected route
 			var button = $(`<a href="${base_route}" class="btn btn-primary">Convert to Purchase Order</a>`);
 			$('.web-form-footer .web-form-actions .right-area').html(button);
@@ -19,7 +21,6 @@ $(document).ready(function() {
 	fillFormFields();
 	hideEmptySections()
 });
-
 
 const tables = {
 	TAXES_TABLE_HEADERS: {

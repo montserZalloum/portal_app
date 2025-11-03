@@ -5,6 +5,12 @@ $(document).on('submit', 'form.web-form', function(e) {
     }
 });
 
+const FieldsFromQuotationToPO = {
+    "customer_name": "customer"
+}
+
+const tableFieldsToProcess = ['taxes','payment_schedule'];
+
 $(document).ready(function(){
     // This script will run as soon as the basic page structure is ready.
 
@@ -92,90 +98,132 @@ $(document).ready(function(){
             // A small delay can sometimes help ensure all Frappe form elements are
             // fully initialized before we try to set their values.
             setTimeout(() => {
-                // Get all fields that are actually present on this web form.
-                // We create a Set for very fast lookups.
-                const available_fields = new Set(frappe.web_form.fields.map(df => df.fieldname));
-                // Use URLSearchParams to easily get all parameters from the URL.
                 const params = new URLSearchParams(window.location.search);
-                let params_were_set = false;
-
-                // Loop through every parameter found in the URL.
-                // 'key' is the parameter name (e.g., "customer")
-                // 'value' is its value (e.g., "CUST-0001")
-                for (const [key, value] of params.entries()) {
-
-                    // Check if a field with the same name as the URL parameter key exists on our form.
-                    if (available_fields.has(key)) {
-
-                        try {
-                            // This special check handles child tables (like the Items table)
-                            // which are passed as a JSON string in the URL.
-                            if (value.startsWith('[') && value.endsWith(']')) {
-                                const table_data = JSON.parse(value);
-                                frappe.web_form.set_value(key, table_data);
-                            } else {
-                                // This is for all regular fields (Link, Data, Select, etc.).
-                                frappe.web_form.set_value(key, value);
-                            }
-                            params_were_set = true;
-                        } catch (e) {
-                            console.error(`Error setting value for field '${key}':`, e);
-                            // If parsing fails, fall back to setting the raw value
-                            frappe.web_form.set_value(key, value);
-                        }
-                    }
-                }
-
-                // Check if quotation_id was passed in URL, fetch items and populate the table
                 const quotation_id = params.get('quotation_id');
-                if (available_fields.has('corex_customer_quotation_id')) {
-                    frappe.web_form.set_value('corex_customer_quotation_id', quotation_id);
-                }
-                // Set naming_series to the first available option automatically
-                if (available_fields.has('naming_series')) {
-                    const naming_series_field = frappe.web_form.fields_dict['naming_series'];
-                    if (naming_series_field && naming_series_field.df.options) {
-                        const options = naming_series_field.df.options.split('\n').filter(opt => opt.trim());
-                        if (options.length > 0) {
-                            frappe.web_form.set_value('naming_series', options[0]);
-                        }
-                    }
-                }
+                const available_fields = new Set(frappe.web_form.fields.map(df => df.fieldname));
 
-                // Set transaction_date to today's date automatically
-                if (available_fields.has('transaction_date')) {
-                    const today = frappe.datetime.get_today();
-                    frappe.web_form.set_value('transaction_date', today);
-                }
-
-                if (quotation_id && available_fields.has('items')) {
+                // Fetch quotation data and populate the form
+                if (quotation_id) {
                     frappe.call({
-                        method: 'portal_app.api.get_quotation_items',
-                        args: { quotation_id },
+                        method: 'frappe.client.get',
+                        args: {
+                            doctype: 'Quotation',
+                            name: quotation_id
+                        },
                         callback: function(response) {
-                            const items = response.message || [];
-                            const field = frappe.web_form.fields_dict['items'];
+                            const quotation = response.message;
 
-                            if (!field) return console.error('items field not found');
-                            if (!Array.isArray(items)) return console.error('Invalid items data');
+                            if (!quotation) {
+                                console.error('Quotation not found');
+                                return;
+                            }
+                            console.log(Object.entries(quotation))
+                            // Populate all non-table fields from quotation
+                            for (const [fieldname, value] of Object.entries(quotation)) {
+                                if (value !== undefined && value !== null) {
+                                    // Check if there's a mapping for this quotation field
+                                    const poFieldname = FieldsFromQuotationToPO[fieldname] || fieldname;
 
-                            // Clear current rows
-                            frappe.web_form.doc.items = [];
+                                    // Check if the PO field exists on this form
+                                    if (available_fields.has(poFieldname)) {
+                                        const field = frappe.web_form.fields_dict[poFieldname];
 
-                            // Add new rows
-                            items.forEach(row => {
-                                frappe.web_form.doc.items.push({
-                                    doctype: 'Purchase Order Item',
-                                    ...row
-                                });
-                            });
+                                        // Skip table fields - handle separately
+                                        if (field && field.df.fieldtype !== 'Table') {
+                                            
+                                            try {
+                                                frappe.web_form.set_value(poFieldname, value);
+                                                console.log(`Populated field: ${poFieldname} (from quotation: ${fieldname})`);
+                                            } catch (e) {
+                                                console.error(`Error setting field '${poFieldname}':`, e);
+                                            }
+                                        } else if (field && field.df.fieldtype === 'Table') {
+                                            // Handle table fields that should be populated
+                                            if (tableFieldsToProcess.includes(fieldname) && Array.isArray(value) && value.length > 0) {
+                                                try {
+                                                    const el = $(`[data-fieldname="${poFieldname}"]`);
+                                                    const data = value;
+                                                    const label = field.df.label || poFieldname;
 
-                            // Update field and UI
-                            field.set_value(frappe.web_form.doc.items);
-                            if (field.grid) field.grid.refresh();
-                        }
-                        ,
-                        error: err => console.error('Error fetching quotation items:', err)
+                                                    // Get table headers from the tables object
+                                                    let tableHeaders = null;
+                                                    if (fieldname === "taxes") {
+                                                        tableHeaders = tables.taxes;
+                                                    }
+                                                    if (fieldname === "payment_schedule") {
+                                                        tableHeaders = tables.payment_schedule;
+                                                    }
+
+                                                    // Create table HTML
+                                                    const table = $('<table class="table table-sm table-bordered"><thead><tr></tr></thead><tbody></tbody></table>');
+
+                                                    const cols = tableHeaders ? Object.keys(tableHeaders) : Object.keys(data[0] || {});
+
+                                                    // Add headers
+                                                    cols.forEach(c => {
+                                                        const headerLabel = tableHeaders ? tableHeaders[c] : c;
+                                                        table.find("thead tr").append(`<th>${headerLabel}</th>`);
+                                                    });
+
+                                                    // Add rows
+                                                    data.forEach(row => {
+                                                        const tr = $("<tr></tr>");
+                                                        cols.forEach(c => tr.append(`<td>${row[c] ?? ""}</td>`));
+                                                        table.find("tbody").append(tr);
+                                                    });
+
+                                                    el.append(`<label class="control-label d-block mb-2">${label}</label>`);
+                                                    el.append(table);
+
+                                                    console.log(`Rendered table: ${poFieldname} (from quotation: ${fieldname})`);
+                                                } catch (e) {
+                                                    console.error(`Error rendering table field '${poFieldname}':`, e);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Set corex_customer_quotation_id
+                            if (available_fields.has('corex_customer_quotation_id')) {
+                                frappe.web_form.set_value('corex_customer_quotation_id', quotation_id);
+                            }
+
+                            // Set naming_series to the first available option automatically
+                            if (available_fields.has('naming_series')) {
+                                const naming_series_field = frappe.web_form.fields_dict['naming_series'];
+                                if (naming_series_field && naming_series_field.df.options) {
+                                    const options = naming_series_field.df.options.split('\n').filter(opt => opt.trim());
+                                    if (options.length > 0) {
+                                        frappe.web_form.set_value('naming_series', options[0]);
+                                    }
+                                }
+                            }
+
+                            // Set transaction_date to today's date automatically
+                            if (available_fields.has('transaction_date')) {
+                                const today = frappe.datetime.get_today();
+                                frappe.web_form.set_value('transaction_date', today);
+                            }
+
+                            // Populate items table from quotation
+                            if (quotation.items && Array.isArray(quotation.items) && available_fields.has('items')) {
+                                const field = frappe.web_form.fields_dict['items'];
+                                if (field) {
+                                    frappe.web_form.doc.items = [];
+                                    quotation.items.forEach(row => {
+                                        frappe.web_form.doc.items.push({
+                                            doctype: 'Purchase Order Item',
+                                            ...row
+                                        });
+                                    });
+                                    field.set_value(frappe.web_form.doc.items);
+                                    if (field.grid) field.grid.refresh();
+                                }
+                            }
+                        },
+                        error: err => console.error('Error fetching quotation:', err)
                     });
                 }
 
@@ -184,4 +232,96 @@ $(document).ready(function(){
     } else {
         
     }
+
+    fillFormFields()
 });
+
+const tables = {
+	taxes: {
+		"account_head": "Account Head",
+		"charge_type": "Type",
+		"rate": "Tax Rate",
+		"tax_amount": "Amount",
+		"total": "Total",
+	},
+	payment_schedule: {
+		"payment_term": "Payment Term",
+		"description" : "Description",
+		"due_date": "Due Date",
+		"invoice_portion": "Invoice Portion",
+		"payment_amount": "Payment Amount"
+	}
+}
+
+function fillFormFields(){
+	frappe.web_form.fields_list.forEach(f => {
+		const el = $(`[data-fieldname="${f.df.fieldname}"]`);
+		if (!el.parents('.hide-control').length) {
+		  const valueEl = el.find('.control-value');
+		  const currentVal = valueEl.text().trim();
+		  const newVal = frappe.web_form.doc[f.df.fieldname];
+		  const label = f.df.label || el.find('label.control-label').text().trim();
+	  
+		  if (!currentVal && newVal !== undefined && newVal !== null && newVal !== '') {
+			if (f.df.fieldtype === "Text Editor") {
+			  valueEl.html(newVal).show();
+			} else {
+			  valueEl.text(newVal).show();
+			}
+	  
+			console.log(`Field: ${label}, Value: ${newVal}`);
+			el.find('.control-label').text(label);
+		  }
+		}
+	  });
+	  
+
+	frappe.web_form.fields_list.forEach(f => {
+		const el = $(`[data-fieldname="${f.df.fieldname}"]`);
+		if (!el.parents('.hide-control').length) {
+			const fieldType = f.df.fieldtype;
+			const valueEl = el.find('.control-value');
+			const currentVal = valueEl.text().trim();
+			const data = frappe.web_form.doc[f.df.fieldname];
+			const label = f.df.label || el.find('label.control-label').text().trim();
+
+		  
+		  
+			if (fieldType === "Table" && Array.isArray(data) && data.length) {
+				let tableHeaders = null;
+			
+				if (f.df.fieldname === "taxes") {
+					tableHeaders = tables.TAXES_TABLE_HEADERS;
+				}
+				if (f.df.fieldname === "payment_schedule") {
+					tableHeaders = tables.PAYMENT_SCHEDULE_HEADERS;
+				}
+				if (f.df.fieldname === "items") {
+					return;
+				}
+
+			
+				const table = $('<table class="table table-sm table-bordered"><thead><tr></tr></thead><tbody></tbody></table>');
+			
+				const cols = tableHeaders ? Object.keys(tableHeaders) : Object.keys(data[0] || {});
+			
+				// headers
+				cols.forEach(c => {
+				const label = tableHeaders ? tableHeaders[c] : c;
+				table.find("thead tr").append(`<th>${label}</th>`);
+				});
+			
+				// rows
+				data.forEach(row => {
+				const tr = $("<tr></tr>");
+				cols.forEach(c => tr.append(`<td>${row[c] ?? ""}</td>`));
+				table.find("tbody").append(tr);
+				});
+			
+				el.append(`<label class="control-label d-block mb-2">${label}</label>`);
+				el.append(table);
+			}
+		}
+	  });
+	  
+}
