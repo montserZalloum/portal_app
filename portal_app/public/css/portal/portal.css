@@ -15,9 +15,6 @@
     background-color: var(--disabled-control-bg)!important;
     pointer-events: none;
 }
-.form-section {
-    border: 1px solid #ccc;
-    padding: 5px 10px;
-    border-radius: 10px;
-    margin-bottom: 10px;
+.web-form:has(.web-form-skeleton) .web-form-footer {
+    display: none;
 }

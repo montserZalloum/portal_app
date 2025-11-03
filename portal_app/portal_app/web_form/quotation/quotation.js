@@ -15,7 +15,33 @@ $(document).ready(function() {
 
 		}
 	});
+
+	fillFormFields()
 });
+
+function fillFormFields(){
+	frappe.web_form.fields_list.forEach(f => {
+		const el = $(`[data-fieldname="${f.df.fieldname}"]`);
+		if (!el.parents('.hide-control').length) {
+		  const valueEl = el.find('.control-value');
+		  const currentVal = valueEl.text().trim();
+		  const newVal = frappe.web_form.doc[f.df.fieldname];
+		  const label = f.df.label || el.find('label.control-label').text().trim();
+	  
+		  if (!currentVal && newVal !== undefined && newVal !== null && newVal !== '') {
+			if (f.df.fieldtype === "Text Editor") {
+			  valueEl.html(newVal).show();
+			} else {
+			  valueEl.text(newVal).show();
+			}
+	  
+			console.log(`Field: ${label}, Value: ${newVal}`);
+			el.find('.control-label').text(label);
+		  }
+		}
+	  });
+	  
+}
 
 function checkForMatchingSalesOrder(cb) {
 	const quotation_id = frappe.web_form.doc.name;
