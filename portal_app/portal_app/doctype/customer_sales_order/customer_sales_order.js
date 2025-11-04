@@ -4,7 +4,7 @@
 frappe.ui.form.on("Customer Sales Order", {
 	refresh(frm) {
 		if (frm.doc.docstatus === 1 && frm.doc.corex_customer_quotation_id && frm.doc.corex_customer_quotation_id != '' 
-			&& (frm.doc.corex_system_sales_order_id && frm.doc.corex_system_sales_order_id == '')) {
+			&& (cur_frm.doc.corex_system_sales_order_id === undefined)) {
 			frm.add_custom_button("Convert to Sales Order", function() {
 				frappe.call({
 					method: "portal_app.portal_app.doctype.customer_sales_order.customer_sales_order.create_sales_order",

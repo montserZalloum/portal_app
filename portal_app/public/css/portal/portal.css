@@ -2,6 +2,8 @@
 [data-path="customer-purchase-order/list"] .web-list-header .button-new,
 [data-path="customer-purchase-order/new"] .discard-btn,
 [data-path="delivery-note/list"] .web-list-header .button-new,
+[data-path="sales-order-portal/list"] .web-list-header .button-new,
+[data-path="quotation/list"] .web-list-header .button-new,
 .web-form .form-in-grid [data-fieldname="name"],
 .web-form .form-in-grid [data-fieldname="warehouse"]{
     display: none;

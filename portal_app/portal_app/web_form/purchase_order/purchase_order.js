@@ -120,7 +120,7 @@ $(document).ready(function(){
                             console.log(Object.entries(quotation))
                             // Populate all non-table fields from quotation
                             for (const [fieldname, value] of Object.entries(quotation)) {
-                                if (value !== undefined && value !== null) {
+                                if (fieldname != 'status' && value !== undefined && value !== null) {
                                     // Check if there's a mapping for this quotation field
                                     const poFieldname = FieldsFromQuotationToPO[fieldname] || fieldname;
 
