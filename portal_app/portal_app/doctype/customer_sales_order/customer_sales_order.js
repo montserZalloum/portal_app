@@ -15,20 +15,21 @@ frappe.ui.form.on("Customer Sales Order", {
 						if (!r.exc) {
 							// Store the created sales order ID
 							if (r.message && r.message.name) {
-								frm.set_value("corex_system_sales_order_id", r.message.name);
-								frm.save();
-							}
-
-							frappe.msgprint({
-								title: "Success",
-								message: "Sales Order created successfully",
-								indicator: "green"
-							});
-							// Optionally open the new Sales Order
-							if (r.message) {
-								setTimeout(() => {
-									frappe.set_route("Form", "Sales Order", r.message.name);
-								}, 1000);
+								frappe.db.set_value(
+									"Customer Sales Order",
+									frm.doc.name,
+									"corex_system_sales_order_id",
+									r.message.name
+								).then(() => {
+									frappe.show_alert({
+										message: __("Sales Order created successfully"),
+										indicator: "green"
+									}, 5);
+									setTimeout(function(){ frappe.set_route("Form", "Sales Order", r.message.name); },1000)
+								});
+								
+								// frm.set_value("corex_system_sales_order_id", );
+								
 							}
 						}
 					}
