@@ -222,6 +222,7 @@ $(document).ready(function(){
                                     if (field.grid) field.grid.refresh();
                                 }
                             }
+                            
                         },
                         error: err => console.error('Error fetching quotation:', err)
                     });

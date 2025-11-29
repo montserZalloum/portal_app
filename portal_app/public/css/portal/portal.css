@@ -5,9 +5,15 @@
 [data-path="sales-order-portal/list"] .web-list-header .button-new,
 [data-path="quotation/list"] .web-list-header .button-new,
 .web-form .form-in-grid [data-fieldname="name"],
-.web-form .form-in-grid [data-fieldname="warehouse"]{
-    display: none;
+.web-form .form-in-grid [data-fieldname="warehouse"],
+[data-path="customer-purchase-order/new"] .link-field .link-btn,
+[data-path="customer-purchase-order/new"] .form-grid-container .grid-heading-row .row > :last-child,
+[data-path="customer-purchase-order/new"] .form-grid-container .row > :last-child,
+[data-path="customer-purchase-order/new"] .form-grid-container [data-fieldname="delivery_date"] {
+    display: none!important;
 }
+
+
 [data-path*="customer-purchase-order/new"] .frappe-control [data-fieldname="company"]{
     min-height: var(--input-height);
     border-radius: var(--border-radius-sm);
@@ -31,5 +37,22 @@
 [data-path*="quotation/"] [data-fieldname="payment_terms_template"],
 [data-path*="quotation/"] [data-fieldname="tc_name"],
 [data-path*="quotation/"] [data-fieldname="base_grand_total"] {
-    /* display: none; */
+    display: none;
+}
+[data-path="customer-purchase-order/new"] .form-grid-container .row .row-check {
+    width: 30px;
+    max-width: 30px;
+}
+[data-path="customer-purchase-order/new"] .form-grid-container .row .row-index {
+    width: 60px;
+    max-width: 60px;
+}
+[data-path="customer-purchase-order/new"] .form-grid-container .row [data-fieldname="qty"] {
+    width: 80px;
+    max-width: 80px;
+    flex: auto;
+}
+[data-path="customer-purchase-order/new"] .form-grid-container .row [data-fieldname="item_code"] {
+    flex: 1;
+    max-width: -webkit-fill-available;
 }
