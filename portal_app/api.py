@@ -60,12 +60,17 @@ def check_quotation_status(quotation_id):
 			'message': str(e)
 		}
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_current_user_roles():
-    """
-    Returns a list of roles for the current session user.
-    This is a secure bridge function to be called from client-side JS.
-    """
-    # frappe.get_roles() automatically gets roles for the current user.
-    # It also correctly handles the "Guest" user.
-    return frappe.get_roles()
+    try:
+        # force success status always
+        frappe.local.response["http_status_code"] = 200
+
+        if frappe.session.user == "Guest":
+            return {"roles": []}
+
+        return frappe.get_roles()
+
+    except Exception:
+        frappe.local.response["http_status_code"] = 200
+        return []
